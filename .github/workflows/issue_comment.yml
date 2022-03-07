@@ -21,8 +21,6 @@ jobs:
         run: echo '${{ toJSON(runner) }}'
       - name: Dump strategy context
         run: echo '${{ toJSON(strategy) }}'
-      - name: Dump matrix context
-        run: echo '${{ toJSON(matrix) }}'
       - name: check contains
         if: contains(github.event.comment.body, '/dev-deploy')   # check the comment if it contains the keywords
           run: |
