@@ -1,0 +1,39 @@
+name: Issue comment workflow
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  deploy-to-devstack:
+    name: Github Actions Comment
+    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/devstack-deploy')
+    runs-on: [self-hosted]
+    steps:
+      - name: Get latest commit of the PR
+        id: get-pr-latest-commit
+        uses: actions/github-script@v3
+        with:
+          result-encoding: string
+          github-token: ${{ secrets.CI_BOT_TOKEN }}
+          script: |
+            const response = await github.pulls.get({
+              owner: context.payload.repository.owner.login,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.issue.number,
+            })
+            return String(response.data.head.sha)
+      - name: Trigger rundeck webhook
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://65673aff-a13a-40d8-9011-9429597e9845.mock.pstmn.io/api/40/webhook/e8JyC1BQgqLJK99F1T6arfbxJpCghPCX'
+          method: 'POST'
+          data: >
+            {
+                "commit_id": "${{steps.get-pr-latest-commit.outputs.result}}",
+                "services": "test",
+                "images": "${{steps.get-pr-latest-commit.outputs.result}}",
+                "repository": "${{ github.repository }}",
+                "pull_request_number": "${{ github.event.issue.number }}",
+                "comment_body": "${{ github.event.comment.body }}"
+            }
