@@ -7,7 +7,7 @@ on:
 jobs:
   deploy-to-dev:
     name: Github Actions Comment
-    if: contains(github.event.comment.body, '/dev-deploy')
+    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/devstack-deploy')
     runs-on: [ubuntu-latest]
     steps:
       - name: Dump GitHub context
