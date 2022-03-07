@@ -14,7 +14,7 @@ jobs:
         id: github_context_step
         run: echo '${{ toJSON(github) }}'
       - name: check condition evaluation
-        if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/dev-deploy')
+        if: github.event.issue.pull_request && contains(github.event.comment.body, '/dev-deploy')
         run: echo the block executes
       - name: Print the comment event
         run: |
