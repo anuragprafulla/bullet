@@ -10,6 +10,13 @@ jobs:
     if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/dev-deploy')
     runs-on: [ubuntu-latest]
     steps:
+      - name: Print the comment event
+        run: |
+          echo "Comment Received"
+          echo ${{github.event.issue.pull_request}}
+          echo ${{github.event.comment.body}}
+          echo "Checking contains"
+          echo $ {{ contains(github.event.comment.body, '/dev-deploy') }} 
       - name: Get latest commit of the PR
         id: get-pr-latest-commit
         run: |
